@@ -1,0 +1,55 @@
+﻿@page "/"
+@attribute [StreamRendering]
+@inject CartService CartService
+
+@using JamaisASec_Site.Network
+@using JamaisASec_Site.Models
+@using BlazorBootstrap;
+
+
+<PageTitle>Home</PageTitle>
+
+<h1>Notre Sélection de Vins : </h1>
+
+
+@if(Articles == null)
+{
+    <p>
+        Loading....
+    </p>
+} else {
+    <div class="container my-4">
+        <div class="row">
+            @foreach (var article in Articles) {   
+                <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4">
+                    <Card Class="mb-4" Style="width:18rem;">
+                        <CardBody>
+                            <CardTitle>@article.nom</CardTitle>
+                            <CardSubTitle Class="mb-2 text-muted">@article.famille.nom, @article.maison.nom</CardSubTitle>
+                            <CardText>@article.description</CardText>
+                            <Button Color="ButtonColor.Primary" To="#" Type="ButtonType.Link">Go somewhere</Button>
+                        </CardBody>
+                    </Card>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<Article>? Articles;
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new ApiClient();
+        Articles = await client.GetAsync<List<Article>>("Articles/get/all");
+
+
+    }
+
+    private void Buy(Article article)
+    {
+        CartService;
+    }
+
+}
