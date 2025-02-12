@@ -1,0 +1,29 @@
+﻿@rendermode InteractiveServer
+@page "/checkout"
+@using JamaisASec_Site.Models
+@using System.Diagnostics
+@inject CartService CartService;
+<PageTitle>Panier</PageTitle>
+
+<h3>Vous avez @CartService.SelectedArticles.Count article(s) dans votre panier.</h3>
+@CartService.GetHashCode()
+@foreach (var article in CartService.SelectedArticles)
+{
+    <div class="card w-100 mb-1">
+        <div class="card-body">
+            <h5 class="card-title">@article.nom</h5>
+            <p class="card-text">@article.description</p>
+            <p class="card-text">Quantité minimale : @article.quantite_Min</p>
+            <blockquote class="card-text">@article.prix_unitaire€</blockquote>
+            <button class="btn btn-primary" type="button" @onclick="() => remove(article)">X</button>
+        </div>
+    </div>
+}
+
+
+@code {
+    public void remove(Article article) {
+        CartService.remove(article);
+        StateHasChanged();
+    }
+}

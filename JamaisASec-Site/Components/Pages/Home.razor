@@ -1,15 +1,16 @@
-﻿@page "/"
+﻿@rendermode InteractiveServer
+@page "/"
 @attribute [StreamRendering]
 @inject CartService CartService
-
-@using JamaisASec_Site.Network
+@using System.Diagnostics
 @using JamaisASec_Site.Models
-@using BlazorBootstrap;
+@using BlazorBootstrap
 
 
 <PageTitle>Home</PageTitle>
 
 <h1>Notre Sélection de Vins : </h1>
+@CartService.GetHashCode()
 
 
 @if(Articles == null)
@@ -20,14 +21,18 @@
 } else {
     <div class="container my-4">
         <div class="row">
+            <div class="col" id="alert-area">
+            </div>
+        </div>
+        <div class="row">
             @foreach (var article in Articles) {   
-                <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4">
+                <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-4">
                     <Card Class="mb-4" Style="width:18rem;">
                         <CardBody>
                             <CardTitle>@article.nom</CardTitle>
                             <CardSubTitle Class="mb-2 text-muted">@article.famille.nom, @article.maison.nom</CardSubTitle>
                             <CardText>@article.description</CardText>
-                            <Button Color="ButtonColor.Primary" To="#" Type="ButtonType.Link">Go somewhere</Button>
+                            <button class="btn btn-primary" type="button" @onclick="() => AddToCart(article)">Ajouter au panier</button>
                         </CardBody>
                     </Card>
                 </div>
@@ -47,9 +52,14 @@
 
     }
 
-    private void Buy(Article article)
+    private void AddToCart(Article article)
     {
-        CartService;
+        
+        CartService.addArticleToCart(article);
+        
+        Debug.WriteLine("Added " + article.nom);
+        Debug.WriteLine(CartService.SelectedArticles.Count);
+        
     }
 
 }

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\JamaisASec-Site.props" />
+</Project>
