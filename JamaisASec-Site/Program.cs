@@ -11,7 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<CartService>();
+builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<AuthService>();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

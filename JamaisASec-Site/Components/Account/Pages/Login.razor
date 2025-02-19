@@ -9,6 +9,7 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject AuthService authService
 
 <PageTitle>Log in</PageTitle>
 
@@ -87,29 +88,19 @@
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        if (result.Succeeded)
-        {
-            Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
-        }
-        else if (result.RequiresTwoFactor)
-        {
-            RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-        }
-        else if (result.IsLockedOut)
-        {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
-        }
-        else
-        {
-            errorMessage = "Error: Invalid login attempt.";
-        }
+
+        var Client = new ApiClient();
+        var AuthObject = new Auth();
+        AuthObject.email = Input.Email;
+        AuthObject.password = Input.Password;
+
+        var result = await Client.PostAsync<Auth>("Auth/login", AuthObject);
+
+        if (result.error != null) 
+            errorMessage = result.error;
+        if (result.client != null)
+            authService.Login(result.client);
+    
     }
 
     private sealed class InputModel

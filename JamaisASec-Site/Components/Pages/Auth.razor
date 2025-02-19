@@ -1,13 +1,13 @@
-﻿@page "/auth"
+﻿@inject AuthService authService
+
+@page "/auth"
 
 @using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
+@if(authService.AuthCheck()) {
+    <PageTitle>Auth</PageTitle>
 
-<PageTitle>Auth</PageTitle>
+    <h1>You are authenticated</h1>
+    <p> salut @authService.getUser().nom!</p>
 
-<h1>You are authenticated</h1>
-
-<AuthorizeView>
-    Hello @context.User.Identity?.Name!
-</AuthorizeView>
+} 

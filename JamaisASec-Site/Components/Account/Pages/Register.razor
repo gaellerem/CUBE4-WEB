@@ -7,6 +7,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using JamaisASec_Site.Data
 
+
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
@@ -14,6 +15,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject AuthService authService
 
 <PageTitle>Register</PageTitle>
 
@@ -82,56 +84,29 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = CreateUser();
+        // var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-        var emailStore = GetEmailStore();
-        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-        var result = await UserManager.CreateAsync(user, Input.Password);
+        // await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        // var emailStore = GetEmailStore();
+        // await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        // var result = await UserManager.CreateAsync(user, Input.Password);
 
-        if (!result.Succeeded)
-        {
-            identityErrors = result.Errors;
-            return;
-        }
+        // if (!result.Succeeded)
+        // {
+        //     identityErrors = result.Errors;
+        //     return;
+        // }
 
         //Envoi une requête vers l'API pour créer un nouveau client
-        createNewClientApi();
+        var clientTask = createNewClientApi();
+        authService.Login(clientTask.Result);
 
         Logger.LogInformation("User created a new account with password.");
 
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
 
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        if (UserManager.Options.SignIn.RequireConfirmedAccount)
-        {
-            RedirectManager.RedirectTo(
-                "Account/RegisterConfirmation",
-                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
-        }
-
-        await SignInManager.SignInAsync(user, isPersistent: false);
-        RedirectManager.RedirectTo(ReturnUrl);
     }
 
-    private ApplicationUser CreateUser()
-    {
-        try
-        {
-            return Activator.CreateInstance<ApplicationUser>();
-        }
-        catch
-        {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
-        }
-    }
+
 
     private IUserEmailStore<ApplicationUser> GetEmailStore()
     {
@@ -179,15 +154,17 @@
     }
 
 
-    private async void createNewClientApi()
+    private async Task<Client> createNewClientApi()
     {
         var client = new Client();
         client.nom = Input.Nom;
         client.mail = Input.Email;
         client.telephone = Input.Phone;
+        client.mot_de_passe = Input.Password;
         client.adresse = Input.Adress;
         var apiClient = new ApiClient();
-        await apiClient.PostAsync<Client>("/Clients/create", client);
+        var response = await apiClient.PostAsync<Client>("/Clients/create", client);
 
+        return response;
     }
 }
