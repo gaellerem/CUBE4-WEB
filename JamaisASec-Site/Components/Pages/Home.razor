@@ -5,13 +5,20 @@
 @using System.Diagnostics
 @using JamaisASec_Site.Models
 @using BlazorBootstrap
+@using JamaisASec_Site
 
 
 <PageTitle>Home</PageTitle>
 
 <h1>Notre Sélection de Vins : </h1>
-@CartService.GetHashCode()
 
+
+<form @onsubmit="OnSearch">
+    <p>
+        search: <input type="text" @bind="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
 
 @if(Articles == null)
 {
@@ -32,6 +39,8 @@
                             <CardTitle>@article.nom</CardTitle>
                             <CardSubTitle Class="mb-2 text-muted">@article.famille.nom, @article.maison.nom</CardSubTitle>
                             <CardText>@article.description</CardText>
+                            <img src="Assets/@article.image" alt="@article.nom" class="img-fluid" />
+
                             <button class="btn btn-primary" type="button" @onclick="() => AddToCart(article)">Ajouter au panier</button>
                         </CardBody>
                     </Card>
@@ -44,13 +53,29 @@
 
 @code {
     private List<Article>? Articles;
+    private List<Article>? AllArticles;
+    public string? SearchString { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var client = new ApiClient();
-        Articles = await client.GetAsync<List<Article>>("Articles/get/all");
-
-
+        AllArticles = await client.GetAsync<List<Article>>("Articles/get/all");
+        Articles = AllArticles;
     }
+
+    private void OnSearch()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            Articles = AllArticles?.Where(s => s.nom.Contains(SearchString, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            Articles = AllArticles;
+        }
+    }
+
+
 
     private void AddToCart(Article article)
     {
