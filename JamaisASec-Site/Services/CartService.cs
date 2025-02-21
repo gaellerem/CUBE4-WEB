@@ -5,40 +5,34 @@ namespace JamaisASec_Site.Services
     public class CartService
     {
 
-        private List<Article> _selectedArticles {get; set;} = new();
+        public List<ArticlesCommande> SelectedArticles { get; set; } = new List<ArticlesCommande>();
 
-        public List<Article> SelectedArticles
+        public void AddArticleToCart(Article article, int quantiteCommandee)
         {
-            get => _selectedArticles;
-            //set => _selectedArticles = value;
-        }
-        
-        private Dictionary<int, int> _quantities { get; set; } = new Dictionary<int, int>();
-        public Dictionary<int, int> Quantities
-        {
-            get => _quantities;
-            //set => _quantities = value;
-        }
+            var existant = SelectedArticles.FirstOrDefault(a => a.Article.id == article.id);
 
-
-
-        public void addArticleToCart(Article article)
-        {
-            _selectedArticles.Add(article);
-
-            if (_quantities.ContainsKey(article.id))
+            if (existant != null)
             {
-                _quantities[article.id]++;
-            } else
-            {
-                _quantities[article.id] = 1;
+                existant.quantite += 1; // ✅ Ajoute **1 seule unité** par clic
             }
-
+            else
+            {
+                SelectedArticles.Add(new ArticlesCommande
+                {
+                    Article = article,
+                    quantite = 1 // ✅ Ajoute 1 par défaut
+                });
+            }
         }
 
-        public void remove(Article article)
+        public void RemoveArticleFromCart(ArticlesCommande articleCommande)
         {
-            _selectedArticles.Remove(article);
+            SelectedArticles.Remove(articleCommande);
+        }
+
+        public void remove(ArticlesCommande articleCommande)
+        {
+            SelectedArticles.Remove(articleCommande);
         }
     }
 }

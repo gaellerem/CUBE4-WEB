@@ -2,6 +2,7 @@
 {
 public class ArticlesCommande
 {
+    public Article Article { get; set; }
     public int id { get; set; }
     public int quantite { get; set; }
     public int articles_ID { get; set; }
