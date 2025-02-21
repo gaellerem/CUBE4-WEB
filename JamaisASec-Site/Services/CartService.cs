@@ -25,10 +25,6 @@ namespace JamaisASec_Site.Services
             }
         }
 
-        public void RemoveArticleFromCart(ArticlesCommande articleCommande)
-        {
-            SelectedArticles.Remove(articleCommande);
-        }
 
         public void remove(ArticlesCommande articleCommande)
         {

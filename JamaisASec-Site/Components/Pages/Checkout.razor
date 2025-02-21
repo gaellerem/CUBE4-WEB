@@ -29,7 +29,7 @@ else
         </div>
     }
 
-    <button class="btn btn-success" @onclick="UpdateStock">Mettre à jour le stock</button>
+    <button class="btn btn-success, btn btn-primary" @onclick="UpdateStock">Commander</button>
 }
 
 @code {
@@ -44,9 +44,10 @@ else
     public async Task UpdateStock()
     {
         var client = new ApiClient();
-        foreach (var articleCommande in CartService.SelectedArticles)
+        try
+        {
+            foreach (var articleCommande in CartService.SelectedArticles)
             {
-            
                 articleCommande.Article.quantite -= articleCommande.quantite;
                 // Créer un DTO pour l'article
                 var articleDto = new ArticleDto
@@ -64,13 +65,25 @@ else
                         maisons_id = articleCommande.Article.maison?.id,
                         fournisseurs_id = articleCommande.Article.fournisseur?.id
                     };
-                await client.PutAsync<List<ArticleDto>>($"Articles/update/{articleDto.id}", articleDto);
+                try
+                {
+                    await client.PutAsync<List<ArticleDto>>($"Articles/update/{articleDto.id}", articleDto);
+                }
+                catch (Exception ex)
+                {
+                    // Enregistrer l'erreur et continuer
+                    Console.WriteLine($"Erreur lors de la mise à jour de l'article {articleDto.id}: {ex.Message}");
+                }
+                CartService.remove(articleCommande);
+                StateHasChanged();
             }
-
-            StateHasChanged();
-        
-
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
+
 }
 
 
