@@ -98,9 +98,12 @@
 
         if (result.error != null) 
             errorMessage = result.error;
-        if (result.client != null)
+        if (result.client != null) {
+
             authService.Login(result.client);
-    
+            RedirectManager.RedirectTo(ReturnUrl);
+
+        }
     }
 
     private sealed class InputModel

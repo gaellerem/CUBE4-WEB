@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<CartService>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddSingleton<AuthService>();
 
 
 // Add services to the container.

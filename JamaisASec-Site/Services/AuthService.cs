@@ -5,15 +5,10 @@ namespace JamaisASec_Site.Services
 {
     public class AuthService
     {
-        private bool IsLoggedIn { get; set; }
-        private Client? LoggedUser { get; set; }
+        private bool IsLoggedIn { get; set; } = false;
+        private Client? LoggedUser { get; set; } = null;
 
 
-        public AuthService()
-        {
-            IsLoggedIn = false;
-            LoggedUser = null;
-        }
 
         public void Logout()
         {
@@ -25,6 +20,7 @@ namespace JamaisASec_Site.Services
         {
             IsLoggedIn = true;
             LoggedUser = client;
+            
         }
 
         public bool AuthCheck() { return IsLoggedIn; }
