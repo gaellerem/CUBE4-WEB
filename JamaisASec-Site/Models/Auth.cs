@@ -1,5 +1,4 @@
-﻿using JamaisASec_Site.Components.Account.Pages.Manage;
-
+﻿
 namespace JamaisASec_Site.Models
 {
     public class Auth

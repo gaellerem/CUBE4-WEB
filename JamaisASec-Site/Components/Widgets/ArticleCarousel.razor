@@ -1,0 +1,76 @@
+﻿
+<div id="articleCarousel" class="bg-white carousel slide border-1 rounded-1"  >
+    <div class="carousel-inner">
+
+        @foreach (var article in Articles) {
+
+            <div class="carousel-item @(firstRun ? "active" : "")">
+                <img class="d-block carousel-image img-fluid" src="Assets/@article.image" alt="@article.nom" style="margin: 0 auto; width: auto;"/>
+            
+                    <div class="carousel-caption bg-opacity-50 bg-dark">
+                        <h5>@article.nom</h5>
+                        <p>@article.description</p>
+                    </div>
+            </div>
+
+            @if(firstRun) {
+                    firstRun = false;
+            }
+        }
+
+
+    </div>
+</div>
+
+<script defer>
+    var myCarousel = new bootstrap.Carousel(document.getElementById('articleCarousel'), {
+        interval: 3500,  
+        ride: 'carousel'
+    });
+    
+</script>
+
+<style>
+    .carousel-item {
+        position: relative;
+    }
+
+    .carousel-item img {
+        height: 25em;
+    }
+
+    .carousel-caption {
+        position: static; /* Ensures the caption is positioned below the image */
+        background-color: rgba(0, 0, 0, 0.5); /* Optional: adds a semi-transparent background */
+        padding: 15px; /* Adds some padding around the caption text */
+        color: white; /* Ensures the caption text is visible */
+        text-align: center; /* Centers the text */
+        width: 100%; /* Makes sure the caption spans the full width of the carousel */
+    }
+
+
+
+
+    .carousel-item img {
+        display: block;
+
+        width: 100%;
+    }
+
+    
+</style>
+
+
+
+@code {
+    public List<Article> Articles;
+    public bool firstRun = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new ApiClient();
+        Articles = new List<Article>();
+        Articles = await client.GetAsync<List<Article>>("Articles/get/all");
+     
+    }
+}

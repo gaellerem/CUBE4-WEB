@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Widgets\" />
     <Folder Include="wwwroot\Assets\" />
   </ItemGroup>
 
