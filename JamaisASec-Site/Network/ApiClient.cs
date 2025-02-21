@@ -60,6 +60,16 @@
                 return false;
             }
         }
+        public async Task<T> PutAsync<T>(string endpoint, object payload)
+        {
+        
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync(endpoint, content);
+            response.EnsureSuccessStatusCode();
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(jsonResponse);
+        }
     }
 
 }

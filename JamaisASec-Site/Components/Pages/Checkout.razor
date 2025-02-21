@@ -3,27 +3,87 @@
 @using JamaisASec_Site.Models
 @using System.Diagnostics
 @inject CartService CartService;
+
+
 <PageTitle>Panier</PageTitle>
 
 <h3>Vous avez @CartService.SelectedArticles.Count article(s) dans votre panier.</h3>
-@CartService.GetHashCode()
-@foreach (var article in CartService.SelectedArticles)
-{
-    <div class="card w-100 mb-1">
-        <div class="card-body">
-            <h5 class="card-title">@article.nom</h5>
-            <p class="card-text">@article.description</p>
-            <p class="card-text">Quantité minimale : @article.quantite_Min</p>
-            <blockquote class="card-text">@article.prix_unitaire€</blockquote>
-            <button class="btn btn-primary" type="button" @onclick="() => remove(article)">X</button>
-        </div>
-    </div>
-}
 
+@if (CartService.SelectedArticles.Count == 0)
+{
+    <p>Votre panier est vide.</p>
+}
+else
+{
+    @foreach (var articleCommande in CartService.SelectedArticles)
+    {
+        <div class="card w-100 mb-1">
+            <div class="card-body">
+                <h5 class="card-title">@articleCommande.Article.nom</h5>
+                <p class="card-text">@articleCommande.Article.description</p>
+                <p class="card-text">Quantité minimale : @articleCommande.Article.quantite_Min</p>
+                <p class="card-text">Quantité commandée : @articleCommande.quantite</p>
+                <blockquote class="card-text">@articleCommande.Article.prix_unitaire€</blockquote>
+                <button class="btn btn-primary" type="button" @onclick="() => remove(articleCommande)">X</button>
+            </div>
+        </div>
+    }
+
+    <button class="btn btn-success, btn btn-primary" @onclick="UpdateStock">Commander</button>
+}
 
 @code {
-    public void remove(Article article) {
-        CartService.remove(article);
+
+
+    public void remove(ArticlesCommande articleCommande)
+    {
+        CartService.remove(articleCommande);
         StateHasChanged();
     }
+
+    public async Task UpdateStock()
+    {
+        var client = new ApiClient();
+        try
+        {
+            foreach (var articleCommande in CartService.SelectedArticles)
+            {
+                articleCommande.Article.quantite -= articleCommande.quantite;
+                // Créer un DTO pour l'article
+                var articleDto = new ArticleDto
+                    {
+                        id = articleCommande.Article.id,
+                        nom = articleCommande.Article.nom,
+                        quantite = articleCommande.Article.quantite,
+                        image = articleCommande.Article.image,
+                        prix_unitaire = articleCommande.Article.prix_unitaire,
+                        colisage = articleCommande.Article.colisage,
+                        quantite_Min = articleCommande.Article.quantite_Min,
+                        annee = articleCommande.Article.annee,
+                        description = articleCommande.Article.description,
+                        familles_id = articleCommande.Article.famille?.id,
+                        maisons_id = articleCommande.Article.maison?.id,
+                        fournisseurs_id = articleCommande.Article.fournisseur?.id
+                    };
+                try
+                {
+                    await client.PutAsync<List<ArticleDto>>($"Articles/update/{articleDto.id}", articleDto);
+                }
+                catch (Exception ex)
+                {
+                    // Enregistrer l'erreur et continuer
+                    Console.WriteLine($"Erreur lors de la mise à jour de l'article {articleDto.id}: {ex.Message}");
+                }
+                CartService.remove(articleCommande);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
 }
+
+

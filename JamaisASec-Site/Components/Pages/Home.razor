@@ -80,7 +80,7 @@
     private void AddToCart(Article article)
     {
         
-        CartService.addArticleToCart(article);
+        CartService.AddArticleToCart(article, article.quantite);
         
         Debug.WriteLine("Added " + article.nom);
         Debug.WriteLine(CartService.SelectedArticles.Count);
