@@ -1,4 +1,4 @@
-/* === Global === */
+ï»¿/* === Global === */
 body {
     font-family: 'Poppins', sans-serif;
     background: #f4e0e0 !important; /* Fond bordeaux clair */
@@ -48,7 +48,7 @@ a {
 
 /* === Navbar === */
 .top-row {
-    background: #5c1111 !important; /* Supprime le dégradé Bootstrap */
+    background: #5c1111 !important; /* Supprime le dï¿½gradï¿½ Bootstrap */
     padding: 1rem;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -91,13 +91,13 @@ a {
     position: fixed;
     left: 0;
     top: 0;
-    background: #4a0e0e !important; /* Bordeaux plus foncé */
+    background: #4a0e0e !important; /* Bordeaux plus foncï¿½ */
     background-image: none !important;
     color: white;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.3); /* Ombre sur le côté droit */
+    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.3); /* Ombre sur le cï¿½tï¿½ droit */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -113,7 +113,7 @@ a {
     }
 
         .sidebar2 a:hover {
-            background: #5c1111; /* Léger surlignement au hover */
+            background: #5c1111; /* Lï¿½ger surlignement au hover */
         }
 
     .sidebar2 .nav-item {
@@ -122,7 +122,7 @@ a {
 
 /* === Cartes Produits === */
 .product-card {
-    background: #f4e0e0; /* Fond bordeaux très clair pour contraste */
+    background: #f4e0e0; /* Fond bordeaux trï¿½s clair pour contraste */
     border-radius: 12px;
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
     padding: 1rem;
@@ -260,7 +260,7 @@ a {
     }
 /* === Navbar === */
 .top-row {
-    background: #5c1111 !important; /* Supprime le dégradé Bootstrap */
+    background: #5c1111 !important; /* Supprime le dï¿½gradï¿½ Bootstrap */
     padding: 1rem;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -303,13 +303,13 @@ a {
     position: fixed;
     left: 0;
     top: 0;
-    background: #4a0e0e !important; /* Bordeaux plus foncé */
+    background: #4a0e0e !important; /* Bordeaux plus foncï¿½ */
     background-image: none !important;
     color: white;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.3); /* Ombre sur le côté droit */
+    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.3); /* Ombre sur le cï¿½tï¿½ droit */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -325,7 +325,7 @@ a {
     }
 
         .sidebar2 a:hover {
-            background: #5c1111; /* Léger surlignement au hover */
+            background: #5c1111; /* Lï¿½ger surlignement au hover */
         }
 
     .sidebar2 .nav-item {
@@ -334,7 +334,7 @@ a {
 
 /* === Cartes Produits === */
 .product-card {
-    background: #f4e0e0; /* Fond bordeaux très clair pour contraste */
+    background: #f4e0e0; /* Fond bordeaux trï¿½s clair pour contraste */
     border-radius: 12px;
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
     padding: 1rem;
