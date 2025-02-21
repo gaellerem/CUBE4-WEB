@@ -6,12 +6,14 @@
 @using JamaisASec_Site.Data
 
 
+
+@inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @inject AuthService authService
 
-@{logout();}
 
 @code {
+    protected override void OnInitialized() => logout();
 
     public void logout() {
         if(authService.AuthCheck()) {
@@ -19,6 +21,6 @@
             StateHasChanged();
         }
 
-        RedirectManager.RedirectTo("/");
+        NavigationManager.NavigateTo("/");
     }
 }
