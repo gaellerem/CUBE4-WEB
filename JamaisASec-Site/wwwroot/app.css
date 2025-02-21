@@ -218,15 +218,18 @@ body {
     background-color: #5c1111 !important;
 }
 
-div.top-row ps-3 navbar navbar-dark {
-    flex-direction: column;
+
+div.top-row ps-3 navbar navbar-dark{
+
+    flex-direction:column;
 }
 
-    div.top-row ps-3 navbar navbar-dark.nav-link {
-        flex-direction: column;
-        align-content: center;
-        margin: 10px;
-    }
+div.top-row ps-3 navbar navbar-dark.nav-link {
+    flex-direction: column;
+    align-content: center;
+    margin: 10px;
+}
+
 /* === Liens et Boutons === */
 a {
     color: #b02a2a;
