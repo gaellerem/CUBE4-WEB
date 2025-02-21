@@ -219,6 +219,16 @@ body {
     background-color: #5c1111 !important;
 }
 
+div.top-row ps-3 navbar navbar-dark{
+
+    flex-direction:column;
+}
+
+div.top-row ps-3 navbar navbar-dark.nav-link {
+    flex-direction: column;
+    align-content: center;
+    margin: 10px;
+}
 /* === Liens et Boutons === */
 a {
     color: #b02a2a;
@@ -227,10 +237,10 @@ a {
     transition: color 0.3s ease;
 }
 
-a.nav-link{
-    font-size : 10px;
-
-}
+    a.nav-link {
+        font-size: 10px;
+        margin: 1px;
+    }
 
     a:hover {
         color: #842020;
@@ -250,7 +260,6 @@ a.nav-link{
         background: #842020;
         transform: translateY(-2px);
     }
-
 /* === Navbar === */
 .top-row {
     background: #5c1111 !important; /* Supprime le dégradé Bootstrap */
