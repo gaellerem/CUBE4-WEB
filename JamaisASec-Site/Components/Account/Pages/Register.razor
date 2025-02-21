@@ -19,14 +19,14 @@
 
 <PageTitle>Register</PageTitle>
 
-<h1>Register</h1>
+<h1>Inscription</h1>
 
 <div class="row">
     <div class="col-md-4">
         <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
+            <h2>Création d'un nouveau compte.</h2>
             <hr />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
@@ -38,7 +38,7 @@
                 <InputText @bind-Value="Input.Adress" class="form-control" autocomplete="adress" aria-required="true" placeholder="24 rue de la binouze,  80200" />
                 <label for="adress">Adresse</label>
                 <ValidationMessage For="() => Input.Adress" class="text-danger" />
-            </div>
+            </div>  
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Phone" class="form-control" autocomplete="phone" aria-required="true" placeholder="0102040807" />
                 <label for="phone">Phone</label>
@@ -64,9 +64,7 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
+            <ArticleCarousel></ArticleCarousel>
         </section>
     </div>
 </div>
