@@ -1,7 +1,7 @@
 ﻿@rendermode InteractiveServer
 @page "/"
 @attribute [StreamRendering]
-@inject CartService CartService
+@inject CartService cartService
 @using System.Diagnostics
 @using JamaisASec_Site.Models
 @using BlazorBootstrap
@@ -28,8 +28,8 @@
 } else {
     <div class="container my-4">
         <div class="row">
-            <div class="col" id="alert-area">
-            </div>
+            <StatusMessage Message="@message"/>
+
         </div>
         <div class="row">
             @foreach (var article in Articles) {   
@@ -40,8 +40,23 @@
                             <CardSubTitle Class="mb-2 text-muted">@article.famille.nom, @article.maison.nom</CardSubTitle>
                             <CardText>@article.description</CardText>
                             <img src="Assets/@article.image" alt="@article.nom" class="img-fluid" />
+                            <div class="row">
+                                <div class="col">
+                                    <button type="button" class="btn btn-primary" @onclick="() => AddToCart(article)">Ajouter au panier</button>
+                                </div>
 
-                            <button class="btn btn-primary" type="button" @onclick="() => AddToCart(article)">Ajouter au panier</button>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <button style="max-width: 4em" type="button" @onclick="() => {if(Amounts[article.id] > 1) Amounts[article.id]--;}" class=" px-4 py-2 text-center btn btn-primary">-</button>
+                                </div>
+                                <div class="col">
+                                    <input style="max-width: 3em"  class="input-group-text" disabled id="@article.id" value="@(Amounts[article.id])" />
+                                </div>
+                                <div class="col">
+                                    <button style="max-width: 4em" type="button" @onclick="() => Amounts[article.id]++" class="px-4 py-2 text-center btn btn-primary">+</button>
+                                </div>
+                            </div>
                         </CardBody>
                     </Card>
                 </div>
@@ -54,13 +69,23 @@
 @code {
     private List<Article>? Articles;
     private List<Article>? AllArticles;
+    private Dictionary<int, int> Amounts;
+
+    private string message;
     public string? SearchString { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var client = new ApiClient();
+        Amounts = new Dictionary<int, int>();
+
         AllArticles = await client.GetAsync<List<Article>>("Articles/get/all");
         Articles = AllArticles;
+
+        foreach(Article article in AllArticles) {
+
+            Amounts.Add(article.id, 1);
+        }
     }
 
     private void OnSearch()
@@ -79,12 +104,17 @@
 
     private void AddToCart(Article article)
     {
-        
-        CartService.AddArticleToCart(article, article.quantite);
-        
+
+
+
+        cartService.AddArticleToCart(article, Amounts[article.id]);
+
+
         Debug.WriteLine("Added " + article.nom);
-        Debug.WriteLine(CartService.SelectedArticles.Count);
-        
+        Debug.WriteLine(cartService.SelectedArticles.Count);
+        message = Amounts[article.id] + " " + article.nom + " ajouté(s) au panier!";
     }
+
+
 
 }

@@ -9,18 +9,18 @@ namespace JamaisASec_Site.Services
 
         public void AddArticleToCart(Article article, int quantiteCommandee)
         {
-            var existant = SelectedArticles.FirstOrDefault(a => a.Article.id == article.id);
+            var existant = SelectedArticles.FirstOrDefault(a => a.article.id == article.id);
 
             if (existant != null)
             {
-                existant.quantite += 1; // ✅ Ajoute **1 seule unité** par clic
+                existant.quantite += quantiteCommandee; // ✅ Ajoute **1 seule unité** par clic
             }
             else
             {
                 SelectedArticles.Add(new ArticlesCommande
                 {
-                    Article = article,
-                    quantite = 1 // ✅ Ajoute 1 par défaut
+                    article = article,
+                    quantite = quantiteCommandee// ✅ Ajoute 1 par défaut
                 });
             }
         }

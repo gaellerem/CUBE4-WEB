@@ -4,7 +4,7 @@ public class Commande
 {
     public int id { get; set; }
     public string reference { get; set; }
-    public DateOnly date { get; set; }
+    public DateTime date { get; set; }
     public string status { get; set; }
 
     // ? signifie peut-être null

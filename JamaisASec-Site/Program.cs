@@ -13,6 +13,7 @@ builder.Services.AddBlazorBootstrap();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddSingleton<AuthService>();
+builder.Services.AddSingleton<OrderReferenceGeneratorService>();
 
 
 // Add services to the container.
