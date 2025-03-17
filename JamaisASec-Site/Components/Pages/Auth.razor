@@ -1,0 +1,14 @@
+﻿@inject AuthService authService
+
+@page "/auth"
+
+@using Microsoft.AspNetCore.Authorization
+
+@if(authService.AuthCheck()) {
+    <PageTitle>Auth</PageTitle>
+
+    <h1>You are authenticated</h1>
+    <p> salut @authService.getUser().nom!</p>
+
+} 
+

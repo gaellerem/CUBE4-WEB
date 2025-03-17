@@ -1,0 +1,153 @@
+﻿@rendermode InteractiveServer
+@page "/checkout"
+@using JamaisASec_Site.Models
+@using System.Diagnostics
+@inject CartService cartService;
+@inject OrderReferenceGeneratorService referenceService;
+@inject AuthService authService;
+
+<PageTitle>Panier</PageTitle>
+
+<h3>Vous avez @cartService.SelectedArticles.Count article(s) dans votre panier.</h3>
+<div class="row">
+    <div class="col">
+        <StatusMessage Message="@message" Error="@error"/>
+    </div>
+</div>
+
+@if (cartService.SelectedArticles.Count == 0)
+{
+    <p>Votre panier est vide.</p>
+}
+else
+{
+    @foreach (var articleCommande in cartService.SelectedArticles)
+    {
+        <div class="card w-100 mb-1">
+            <div class="card-body">
+                <h5 class="card-title">@articleCommande.article.nom</h5>
+                <p class="card-text">@articleCommande.article.description</p>
+                <p class="card-text">Quantité minimale : @articleCommande.article.quantite_Min</p>
+                <p class="card-text">Quantité commandée : @articleCommande.quantite</p>
+                <blockquote class="card-text">@(articleCommande.article.prix_unitaire * articleCommande.quantite)€</blockquote>
+                <button class="btn btn-primary" type="button" @onclick="() => remove(articleCommande)">X</button>
+            </div>
+        </div>
+    }
+
+    <button class="btn btn-success, btn btn-primary" @onclick="() => CreateOrderAndUpdateStock()">Commander</button>
+}
+
+@code {
+    private string message;
+    private bool error = false;
+
+    public void remove(ArticlesCommande articleCommande)
+    {
+        cartService.remove(articleCommande);
+        StateHasChanged();
+    }
+
+    private async void CreateFournisseurCommande(ArticlesCommande articleCommande) {
+        var client = new ApiClient();
+
+        Commande commande = new Commande
+            {
+                date = DateTime.Now,
+                reference = referenceService.GenerateOrderReference() + "-FOURNISSEUR",
+                status = "Commandée",
+                clients_ID = null,
+                fournisseurs_id = articleCommande.article.fournisseur.id,
+            };
+
+        var created_commande = await client.PostAsync<Commande>("Commandes/create", commande);
+
+        await client.PostAsync<ArticlesCommande>("ArticlesCommande/create", articleCommande);
+
+    }   
+
+    public async Task CreateOrderAndUpdateStock()
+    {
+        if(!authService.AuthCheck()) {
+            message = "Vous devez être connecté pour passer une commande !";
+            error = true;
+            return;
+        }
+
+        var client = new ApiClient();
+        try
+        {
+            Commande commande = new Commande
+                {
+                    date       = DateTime.Now,
+                    reference  = referenceService.GenerateOrderReference() + "-CLIENT",
+                    status     = "Commandée",
+                    clients_ID = authService.getUser().id,
+                    fournisseurs_id = null
+
+                };
+
+            var created_commande = await client.PostAsync<Commande>("Commandes/create", commande);
+
+            //TODO: si article.quantité passe en dessous de 0, créer une nouvelle commande fournisseur?
+            foreach (var articleCommande in cartService.SelectedArticles)
+            {
+
+                articleCommande.commandes_ID = created_commande.id;
+                articleCommande.articles_ID = articleCommande.article.id;
+                articleCommande.article.quantite -= articleCommande.quantite;
+
+                var created_articleCommande = await client.PostAsync<ArticlesCommande>("ArticlesCommandes/create", articleCommande);
+
+                if (articleCommande.article.quantite < articleCommande.article.quantite_Min)
+                {
+                    CreateFournisseurCommande(articleCommande);
+                }
+
+                // Créer un DTO pour l'article
+                var articleDto = new ArticleDto
+                    {
+                        id = articleCommande.article.id,
+                        nom = articleCommande.article.nom,
+                        quantite = articleCommande.article.quantite,
+                        image = articleCommande.article.image,
+                        prix_unitaire = articleCommande.article.prix_unitaire,
+                        colisage = articleCommande.article.colisage,
+                        quantite_Min = articleCommande.article.quantite_Min,
+                        annee = articleCommande.article.annee,
+                        description = articleCommande.article.description,
+                        familles_id = articleCommande.article.famille?.id,
+                        maisons_id = articleCommande.article.maison?.id,
+                        fournisseurs_id = articleCommande.article.fournisseur?.id
+                    };
+
+
+
+                try
+                {
+                    await client.PutAsync<ArticleDto>($"Articles/update/{articleDto.id}", articleDto);
+                }
+                catch (Exception ex)
+                {
+                    // Enregistrer l'erreur et continuer
+                    Console.WriteLine($"Erreur lors de la mise à jour de l'article {articleDto.id}: {ex.Message}");
+                    error = false;
+                    message = "Erreur lors du passage de la commande, si le problème persiste veuillez contacter le gérant.";
+                }
+            }
+            message = "Commande passée avec succès !";
+            cartService.SelectedArticles.Clear();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = false;
+            message = "Erreur lors du passage de la commande, si le problème persiste veuillez contacter le gérant.";
+            return;
+        }
+    }
+
+}
+
+

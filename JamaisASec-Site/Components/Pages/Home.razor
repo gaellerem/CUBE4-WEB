@@ -1,0 +1,120 @@
+﻿@rendermode InteractiveServer
+@page "/"
+@attribute [StreamRendering]
+@inject CartService cartService
+@using System.Diagnostics
+@using JamaisASec_Site.Models
+@using BlazorBootstrap
+@using JamaisASec_Site
+
+
+<PageTitle>Home</PageTitle>
+
+<h1>Notre Sélection de Vins : </h1>
+
+
+<form @onsubmit="OnSearch">
+    <p>
+        search: <input type="text" @bind="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+@if(Articles == null)
+{
+    <p>
+        Loading....
+    </p>
+} else {
+    <div class="container my-4">
+        <div class="row">
+            <StatusMessage Message="@message"/>
+
+        </div>
+        <div class="row">
+            @foreach (var article in Articles) {   
+                <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-4">
+                    <Card Class="mb-4" Style="width:18rem;">
+                        <CardBody>
+                            <CardTitle>@article.nom</CardTitle>
+                            <CardSubTitle Class="mb-2 text-muted">@article.famille.nom, @article.maison.nom</CardSubTitle>
+                            <CardText>@article.description</CardText>
+                            <img src="Assets/@article.image" alt="@article.nom" class="img-fluid" />
+                            <div class="row">
+                                <div class="col">
+                                    <button type="button" class="btn btn-primary" @onclick="() => AddToCart(article)">Ajouter au panier</button>
+                                </div>
+
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <button style="max-width: 4em" type="button" @onclick="() => {if(Amounts[article.id] > 1) Amounts[article.id]--;}" class=" px-4 py-2 text-center btn btn-primary">-</button>
+                                </div>
+                                <div class="col">
+                                    <input style="max-width: 3em"  class="input-group-text" disabled id="@article.id" value="@(Amounts[article.id])" />
+                                </div>
+                                <div class="col">
+                                    <button style="max-width: 4em" type="button" @onclick="() => Amounts[article.id]++" class="px-4 py-2 text-center btn btn-primary">+</button>
+                                </div>
+                            </div>
+                        </CardBody>
+                    </Card>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<Article>? Articles;
+    private List<Article>? AllArticles;
+    private Dictionary<int, int> Amounts;
+
+    private string message;
+    public string? SearchString { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new ApiClient();
+        Amounts = new Dictionary<int, int>();
+
+        AllArticles = await client.GetAsync<List<Article>>("Articles/get/all");
+        Articles = AllArticles;
+
+        foreach(Article article in AllArticles) {
+
+            Amounts.Add(article.id, 1);
+        }
+    }
+
+    private void OnSearch()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            Articles = AllArticles?.Where(s => s.nom.Contains(SearchString, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            Articles = AllArticles;
+        }
+    }
+
+
+
+    private void AddToCart(Article article)
+    {
+
+
+
+        cartService.AddArticleToCart(article, Amounts[article.id]);
+
+
+        Debug.WriteLine("Added " + article.nom);
+        Debug.WriteLine(cartService.SelectedArticles.Count);
+        message = Amounts[article.id] + " " + article.nom + " ajouté(s) au panier!";
+    }
+
+
+
+}

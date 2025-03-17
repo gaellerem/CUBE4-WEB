@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-JamaisASec-Site-760ec212-28bd-4207-92d5-d50872eb6385</UserSecretsId>
+    <RootNamespace>JamaisASec-Site</RootNamespace>
+    <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Components\Widgets\ArticleList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Assets\cheval_blanc_2018.jpg" />
+    <None Include="wwwroot\Assets\haut_brion_2016.jpg" />
+    <None Include="wwwroot\Assets\leflaive_puligny_2019.jpg" />
+    <None Include="wwwroot\Assets\leroy_blanc_2020.jpg" />
+    <None Include="wwwroot\Assets\mumm_cordon_rouge.jpg" />
+    <None Include="wwwroot\Assets\petrus_2012.jpg" />
+    <None Include="wwwroot\Assets\ruinart_blanc.jpg" />
+    <None Include="wwwroot\Assets\yquem_2010.jpg" />
+  </ItemGroup>
+
+</Project>

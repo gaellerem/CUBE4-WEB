@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Pro\\source\\repos\\JamaisASec-Site\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\JamaisASec-Site.bundle.scp.css",
+      "PackagePath": "staticwebassets\\JamaisASec-Site.4a709gn0ff.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\Pro\\source\\repos\\JamaisASec-Site\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\Pro\\source\\repos\\JamaisASec-Site\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\Pro\\source\\repos\\JamaisASec-Site\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\Pro\\source\\repos\\JamaisASec-Site\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.JamaisASec-Site.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.JamaisASec-Site.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.JamaisASec-Site.props",
+      "PackagePath": "build\\JamaisASec-Site.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.JamaisASec-Site.props",
+      "PackagePath": "buildMultiTargeting\\JamaisASec-Site.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.JamaisASec-Site.props",
+      "PackagePath": "buildTransitive\\JamaisASec-Site.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

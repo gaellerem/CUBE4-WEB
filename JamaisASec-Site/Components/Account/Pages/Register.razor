@@ -1,0 +1,172 @@
+﻿@page "/Account/Register"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using JamaisASec_Site.Data
+
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IEmailSender<ApplicationUser> EmailSender
+@inject ILogger<Register> Logger
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject AuthService authService
+
+<PageTitle>Register</PageTitle>
+
+<h1>Inscription</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <StatusMessage Message="@Message" />
+        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+            <DataAnnotationsValidator />
+            <h2>Création d'un nouveau compte.</h2>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Nom" class="form-control" autocomplete="username" aria-required="true" placeholder="Nom, prenom" />
+                <label for="nom">Nom</label>
+                <ValidationMessage For="() => Input.Nom" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Adress" class="form-control" autocomplete="adress" aria-required="true" placeholder="24 rue de la binouze,  80200" />
+                <label for="adress">Adresse</label>
+                <ValidationMessage For="() => Input.Adress" class="text-danger" />
+            </div>  
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Phone" class="form-control" autocomplete="phone" aria-required="true" placeholder="0102040807" />
+                <label for="phone">Phone</label>
+                <ValidationMessage For="() => Input.Phone" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label for="email">Email</label>
+                <ValidationMessage For="() => Input.Email" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="password">Password</label>
+                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="confirm-password">Confirm Password</label>
+                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </EditForm>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <ArticleCarousel></ArticleCarousel>
+        </section>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<IdentityError>? identityErrors;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    public async Task RegisterUser(EditContext editContext)
+    {
+        // var user = CreateUser();
+
+        // await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        // var emailStore = GetEmailStore();
+        // await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        // var result = await UserManager.CreateAsync(user, Input.Password);
+
+        // if (!result.Succeeded)
+        // {
+        //     identityErrors = result.Errors;
+        //     return;
+        // }
+
+        //Envoi une requête vers l'API pour créer un nouveau client
+        var clientTask = createNewClientApi();
+        authService.Login(clientTask.Result);
+
+        Logger.LogInformation("User created a new account with password.");
+
+        StateHasChanged();
+
+        RedirectManager.RedirectTo(ReturnUrl);
+
+
+    }
+
+
+
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!UserManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<ApplicationUser>)UserStore;
+    }
+
+    private sealed class InputModel
+    {
+
+        [Required]
+        [Display(Name = "Nom")]
+        public string Nom { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Adresse")]
+        public string Adress { get; set; } = "";
+
+        [Required]
+        [Phone]
+        [Display(Name = "Téléphone")]
+        public string Phone { get; set; } = "";
+
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+
+
+    private async Task<Client> createNewClientApi()
+    {
+        var client = new Client();
+        client.nom = Input.Nom;
+        client.mail = Input.Email;
+        client.telephone = Input.Phone;
+        client.mot_de_passe = Input.Password;
+        client.adresse = Input.Adress;
+        var apiClient = new ApiClient();
+        var response = await apiClient.PostAsync<Client>("/Clients/create", client);
+
+        return response;
+    }
+}
